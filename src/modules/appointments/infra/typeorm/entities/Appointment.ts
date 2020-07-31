@@ -1,15 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, 
+         UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
-import User from './User';
+import User from '@modules/users/infra/typeorm/entities/User';
 /**
  *  Um para Um (OneToOne)
  *  Um para Muitos (OneToMany)
  *  Muitos para Muitos (ManyToMany)
- * 
  */
-
-// KISS - Keep it Simple and Stupid
-
 
 //representação dos dados
 @Entity('appointments')
