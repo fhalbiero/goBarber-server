@@ -1,0 +1,5 @@
+1. Rotas e controllers
+2. repositorio de tokens (TypeORM)
+3. criar migration de tokens
+4. provider de envio de email (DEV)
+5. testar tudo

@@ -1,46 +1,27 @@
 import { Router } from 'express';
+import { celebrate, Segments, Joi } from 'celebrate';
 import multer from 'multer';
 
 import uploadConfig from '@config/upload';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
-import CreateUserService from '@modules/users/services/CreateUserService';
-import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
-import UsersRepository from '../../typeorm/repositories/UserRepository';
+import UsersController from '../controllers/UsersController';
+import UserAvatarController from '../controllers/UserAvatarController';
 
 const usersRouter = Router();
+const usersController = new UsersController;
+const userAvatarController = new UserAvatarController;
 
-const upload = multer(uploadConfig);
+const upload = multer(uploadConfig.multer);
 
-usersRouter.post('/', async (request, response) => {
-    
-    const { name, email, password } = request.body;
+usersRouter.post('/', celebrate({
+    [Segments.BODY]: {
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().required()    
+    }
+}), usersController.create);
 
-    const usersRepository = new UsersRepository();
-    const createUser = new CreateUserService(usersRepository);
-
-    const user = await createUser.execute({ 
-        name,
-        email, 
-        password });
-    
-    delete user.password;
-    
-    return response.json(user);
-});
-
-
-//utilizado pra atualizar uma unica informação
-usersRouter.patch('/', ensureAuthenticated, upload.single('avatar'), async (request, response) => {
-    const usersRepository = new UsersRepository();
-    const updateUserAvatarService = new UpdateUserAvatarService(usersRepository);
-
-    const user = await updateUserAvatarService.execute({
-        user_id: request.user.id,
-        avatarFilename: request.file.filename
-    });
-
-    return response.json(user);
-});
+usersRouter.patch('/', ensureAuthenticated,  upload.single('avatar'), userAvatarController.update);
 
 
 export default usersRouter;

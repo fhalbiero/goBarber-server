@@ -1,42 +1,26 @@
 import { Router } from 'express';
-import { parseISO } from 'date-fns';
+import { celebrate, Segments, Joi } from 'celebrate';
 
-import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
-import CreateAppointmentService from '@modules/appointments/services/CreateAppointmentService';
-
+import AppointmentsController from '../controllers/AppointmentsController';
+import ProviderAppointmentsController from '../controllers/ProviderAppointmentsController';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 
 const appointmentsRouter = Router();
+const appointementController = new AppointmentsController();
+const providerAppointmentsController = new ProviderAppointmentsController();
 
 appointmentsRouter.use( ensureAuthenticated );
 
 //SoC: Separation of Concerns (Separação de Preocupações)
 //DTO - Data Transfer Objects
 
-//receber Requisição, chamar outro arquivo, devolver resposta
-/* appointmentsRouter.get('/', async (request, response) => {
-    const appointments = await appointmentsRepository.find();
-
-    return response.json(appointments);
-}); */
-
-
-appointmentsRouter.post('/', async (request, response) => {
-    const { provider_id, date } = request.body;
-
-    const appointmentsRepository = new AppointmentsRepository();
-
-    const parsedDate = parseISO(date);
-
-    const createAppointment = new CreateAppointmentService(appointmentsRepository);
-
-    const appointment = await createAppointment.execute({
-        provider_id,
-        date: parsedDate
-    });
-
-    return response.json(appointment);
-});
+appointmentsRouter.post('/', celebrate({
+    [Segments.BODY]: {
+        provider_id: Joi.string().uuid().required(),
+        date: Joi.date(),
+    }
+}), appointementController.create);
+appointmentsRouter.get('/me', providerAppointmentsController.index);
 
 
 export default appointmentsRouter;

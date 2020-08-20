@@ -4,6 +4,8 @@ node_modules/
 build/
 tmp/
 temp/
+.env
+ormconfig.json
 
 tmp/*
 !tmp/.gitkeep
