@@ -17,7 +17,7 @@
     "@types/handlebars": "^4.1.0",
     "@types/nodemailer": "^6.4.0",
     "@types/redis": "^2.8.25",
-    "aws-sdk": "^2.735.0",
+    "aws-sdk": "^2.814.0",
     "bcryptjs": "^2.4.3",
     "celebrate": "^12.2.0",
     "class-transformer": "^0.3.1",
